@@ -5,21 +5,21 @@
   <div class="space-y-6">
     <!-- Loto -->
     <div>
-      <img src="assets/loto.png" alt="Loto" class="w-full max-w-xs mx-auto mb-2" />
+      <img src="assets/loto.png" alt="Loto" class="mx-auto mb-2 h-32 object-contain" />
       <input type="number" [(ngModel)]="loto" class="w-full border p-2 mb-1" placeholder="Ingrese monto en millones" />
       <p class="text-center">Ud cobrará {{ loto * 0.83 | number:'1.0-0' }} millones de pesos</p>
     </div>
 
     <!-- Kino -->
     <div>
-      <img src="assets/kino.png" alt="Kino" class="w-full max-w-xs mx-auto mb-2" />
+      <img src="assets/kino.png" alt="Kino" class="mx-auto mb-2 h-32 object-contain" />
       <input type="number" [(ngModel)]="kino" class="w-full border p-2 mb-1" placeholder="Ingrese monto en millones" />
       <p class="text-center">Ud cobrará {{ kino * 0.83 | number:'1.0-0' }} millones de pesos</p>
     </div>
 
     <!-- MegaMillions -->
     <div>
-      <img src="assets/megamillions.png" alt="MegaMillions" class="w-full max-w-xs mx-auto mb-2" />
+      <img src="assets/megamillions.png" alt="MegaMillions" class="mx-auto mb-2 h-32 object-contain" />
       <input type="number" [(ngModel)]="mega" class="w-full border p-2 mb-1" placeholder="Ingrese monto en millones USD" />
       <p class="text-center">
         Ud cobrará {{ calcularMega(mega) | number:'1.0-0' }} millones de pesos
