@@ -40,20 +40,20 @@ import { FormsModule } from '@angular/forms';
 
       <div>
         <img src="assets/loto.png" alt="Loto" class="image" />
-        <input [(ngModel)]="loto" type="number" />
-        <p>Ud cobrará {{ calcularLotoKino(loto) }} millones de pesos</p>
+        <input [(ngModel)]="loto" type="number" min="0" (keypress)="soloNumeros($event)" />
+        <p>Ud cobrará {{ calcularLotoKino(loto) | number:'1.0-0' }} millones de pesos</p>
       </div>
 
       <div>
         <img src="assets/kino.png" alt="Kino" class="image" />
-        <input [(ngModel)]="kino" type="number" />
-        <p>Ud cobrará {{ calcularLotoKino(kino) }} millones de pesos</p>
+        <input [(ngModel)]="kino" type="number" min="0" (keypress)="soloNumeros($event)" />
+        <p>Ud cobrará {{ calcularLotoKino(kino) | number:'1.0-0' }} millones de pesos</p>
       </div>
 
       <div>
         <img src="assets/megamillions.png" alt="MegaMillions" class="image" />
-        <input [(ngModel)]="mega" type="number" />
-        <p>Ud cobrará {{ calcularMega(mega) }} millones de pesos</p>
+        <input [(ngModel)]="mega" type="number" min="0" (keypress)="soloNumeros($event)" />
+        <p>Ud cobrará {{ calcularMega(mega) | number:'1.0-0' }} millones de pesos</p>
       </div>
     </div>
   `
@@ -70,6 +70,13 @@ export class AppComponent {
 
   calcularMega(valor: number): number {
     return Math.round(valor * 0.32 * 0.72 * this.dolar);
+  }
+
+  soloNumeros(event: KeyboardEvent): void {
+    const char = event.key;
+    if (!/^[0-9]$/.test(char)) {
+      event.preventDefault();
+    }
   }
 }
 
