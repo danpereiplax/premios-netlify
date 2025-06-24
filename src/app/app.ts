@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   styles: [`
     .container {
       max-width: 400px;
@@ -63,6 +64,24 @@ export class AppComponent {
   kino = 0;
   mega = 0;
   dolar = 950;
+
+  private http = inject(HttpClient);
+
+  constructor() {
+    this.obtenerDolar();
+  }
+
+  obtenerDolar(): void {
+    this.http.get<any>('https://findic.cl/api/').subscribe({
+      next: (data) => {
+        const valor = parseInt(data.dolar?.valor ?? '950', 10);
+        if (!isNaN(valor)) this.dolar = valor;
+      },
+      error: () => {
+        this.dolar = 950;
+      }
+    });
+  }
 
   calcularLotoKino(valor: number): number {
     return Math.round(valor * 0.83);
