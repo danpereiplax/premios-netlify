@@ -7,27 +7,53 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  styles: [`
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1rem auto;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+    p {
+      font-size: 1.1rem;
+      margin: 0.5rem 0 2rem 0;
+    }
+    h1 {
+      margin-bottom: 2rem;
+    }
+  `],
   template: `
-    <div class="p-6 max-w-md mx-auto text-center">
-      <p class="text-sm mb-4">Valor del dólar = {{ dolar }} CLP</p>
-      <h1 class="text-2xl font-bold mb-6">Simulador de Premios</h1>
+    <div class="container">
+      <p>Valor del dólar = {{ dolar }} CLP</p>
+      <h1>Simulador de Premios</h1>
 
-      <div class="mb-6 flex flex-col items-center">
-        <img src="assets/loto.png" alt="Loto" class="w-40 mb-2" />
-        <input [(ngModel)]="loto" type="number" class="border p-2 w-full max-w-xs mb-2 text-center" />
-        <p class="text-sm">Ud cobrará {{ calcularLotoKino(loto) }} millones de pesos</p>
+      <div>
+        <img src="assets/loto.png" alt="Loto" class="image" />
+        <input [(ngModel)]="loto" type="number" />
+        <p>Ud cobrará {{ calcularLotoKino(loto) }} millones de pesos</p>
       </div>
 
-      <div class="mb-6 flex flex-col items-center">
-        <img src="assets/kino.png" alt="Kino" class="w-40 mb-2" />
-        <input [(ngModel)]="kino" type="number" class="border p-2 w-full max-w-xs mb-2 text-center" />
-        <p class="text-sm">Ud cobrará {{ calcularLotoKino(kino) }} millones de pesos</p>
+      <div>
+        <img src="assets/kino.png" alt="Kino" class="image" />
+        <input [(ngModel)]="kino" type="number" />
+        <p>Ud cobrará {{ calcularLotoKino(kino) }} millones de pesos</p>
       </div>
 
-      <div class="mb-6 flex flex-col items-center">
-        <img src="assets/megamillions.png" alt="MegaMillions" class="w-40 mb-2" />
-        <input [(ngModel)]="mega" type="number" class="border p-2 w-full max-w-xs mb-2 text-center" />
-        <p class="text-sm">Ud cobrará {{ calcularMega(mega) }} millones de pesos</p>
+      <div>
+        <img src="assets/megamillions.png" alt="MegaMillions" class="image" />
+        <input [(ngModel)]="mega" type="number" />
+        <p>Ud cobrará {{ calcularMega(mega) }} millones de pesos</p>
       </div>
     </div>
   `
@@ -39,7 +65,7 @@ export class AppComponent {
   dolar = 950;
 
   calcularLotoKino(valor: number): number {
-    return Math.round(valor * 0.83); // 17% descuento
+    return Math.round(valor * 0.83);
   }
 
   calcularMega(valor: number): number {
