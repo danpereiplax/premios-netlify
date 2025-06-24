@@ -1,46 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   template: `
-    <div class="p-8">
-      <h1 class="text-4xl font-bold mb-6">Simulador de Premios</h1>
+    <div class="p-4 max-w-md mx-auto text-center">
+      <p class="text-sm mb-4 text-gray-600">Valor del dólar: <strong>{{ dolar }}</strong> pesos</p>
 
-      <div class="mb-6">
-        <img src="assets/loto.png" alt="Loto" class="inline-block w-6 h-6" />
-        <input [(ngModel)]="loto" type="number" class="border ml-2 p-1" />
-        <p class="mt-2">Ud cobrará {{ calcularLotoKino(loto) }} millones de pesos</p>
-      </div>
+      <h1 class="text-2xl font-bold mb-6">Simulador de Premios</h1>
 
-      <div class="mb-6">
-        <img src="assets/kino.png" alt="Kino" class="inline-block w-6 h-6" />
-        <input [(ngModel)]="kino" type="number" class="border ml-2 p-1" />
-        <p class="mt-2">Ud cobrará {{ calcularLotoKino(kino) }} millones de pesos</p>
-      </div>
-
-      <div class="mb-6">
-        <img src="assets/megamillions.png" alt="MegaMillions" class="inline-block w-6 h-6" />
-        <input [(ngModel)]="mega" type="number" class="border ml-2 p-1" />
-        <p class="mt-2">Ud cobrará {{ calcularMega(mega) }} millones de pesos</p>
+      <div class="mb-8" *ngFor="let juego of juegos">
+        <img [src]="juego.imagen" [alt]="juego.nombre" class="w-24 h-24 mx-auto mb-3 rounded shadow" />
+        <input [(ngModel)]="juego.valor" type="number"
+          class="border p-2 w-full text-center rounded mb-1 outline-none focus:ring-2 focus:ring-blue-300" />
+        <p class="text-sm text-gray-700">Ud cobrará <strong>{{ calcular(juego) }}</strong> millones de pesos</p>
       </div>
     `
 })
 export class AppComponent {
-  loto = 0;
-  kino = 0;
-  mega = 0;
+  private http = inject(HttpClient);
 
-  calcularLotoKino(valor: number): number {
-    return Math.round(valor * 0.83); // 17% de descuento
+  dolar: number = 0;
+
+  juegos = [
+    { nombre: 'Loto', imagen: 'assets/loto.png', valor: 0, tipo: 'nacional' },
+    { nombre: 'Kino', imagen: 'assets/kino.png', valor: 0, tipo: 'nacional' },
+    { nombre: 'MegaMillions', imagen: 'assets/megamillions.png', valor: 0, tipo: 'mega' }
+  ];
+
+  constructor() {
+    this.http.get<any>('https://findic.cl/api/').subscribe(data => {
+      this.dolar = data.dolar.valor;
+    });
   }
 
-  calcularMega(valor: number): number {
-    return Math.round(valor * 0.32 * 0.72 * 935); // fórmula exacta de tu Excel
+  calcular(juego: any): number {
+    if (juego.tipo === 'nacional') {
+      return Math.round(juego.valor * 0.83);
+    } else if (juego.tipo === 'mega') {
+      return Math.round(juego.valor * 0.32 * 0.72 * this.dolar);
+    }
+    return 0;
   }
 }
 
