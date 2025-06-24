@@ -1,51 +1,63 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="p-4 max-w-md mx-auto text-center">
-      <p class="text-sm mb-4 text-gray-600">Valor del dólar: <strong>{{ dolar }}</strong> pesos</p>
-
+      <p class="text-sm mb-4">Valor del dólar = {{ dolar() }} CLP</p>
       <h1 class="text-2xl font-bold mb-6">Simulador de Premios</h1>
 
-      <div class="mb-8" *ngFor="let juego of juegos">
-        <img [src]="juego.imagen" [alt]="juego.nombre" class="w-24 h-24 mx-auto mb-3 rounded shadow" />
-        <input [(ngModel)]="juego.valor" type="number"
-          class="border p-2 w-full text-center rounded mb-1 outline-none focus:ring-2 focus:ring-blue-300" />
-        <p class="text-sm text-gray-700">Ud cobrará <strong>{{ calcular(juego) }}</strong> millones de pesos</p>
+      <div class="mb-8">
+        <img src="assets/loto.png" alt="Loto" class="w-32 mx-auto mb-2" />
+        <input [(ngModel)]="loto" type="number" class="w-full p-3 text-lg border rounded" placeholder="Monto Loto" />
+        <p class="mt-3 text-base font-medium">Ud cobrará {{ calcularLotoKino(loto) }} millones de pesos</p>
       </div>
-    `
+
+      <div class="mb-8">
+        <img src="assets/kino.png" alt="Kino" class="w-32 mx-auto mb-2" />
+        <input [(ngModel)]="kino" type="number" class="w-full p-3 text-lg border rounded" placeholder="Monto Kino" />
+        <p class="mt-3 text-base font-medium">Ud cobrará {{ calcularLotoKino(kino) }} millones de pesos</p>
+      </div>
+
+      <div class="mb-8">
+        <img src="assets/megamillions.png" alt="MegaMillions" class="w-32 mx-auto mb-2" />
+        <input [(ngModel)]="mega" type="number" class="w-full p-3 text-lg border rounded" placeholder="Monto MegaMillions" />
+        <p class="mt-3 text-base font-medium">Ud cobrará {{ calcularMega(mega) }} millones de pesos</p>
+      </div>
+    </div>
+  `
 })
 export class AppComponent {
-  private http = inject(HttpClient);
+  loto = 0;
+  kino = 0;
+  mega = 0;
 
-  dolar: number = 0;
-
-  juegos = [
-    { nombre: 'Loto', imagen: 'assets/loto.png', valor: 0, tipo: 'nacional' },
-    { nombre: 'Kino', imagen: 'assets/kino.png', valor: 0, tipo: 'nacional' },
-    { nombre: 'MegaMillions', imagen: 'assets/megamillions.png', valor: 0, tipo: 'mega' }
-  ];
+  dolar = signal(935); // Valor inicial de respaldo
 
   constructor() {
-    this.http.get<any>('https://findic.cl/api/').subscribe(data => {
-      this.dolar = data.dolar.valor;
-    });
+    fetch('https://findic.cl/api/')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.dolar?.valor) {
+          this.dolar.set(Math.round(data.dolar.valor));
+        }
+      })
+      .catch(() => {
+        console.warn('No se pudo obtener el valor del dólar desde la API, usando valor por defecto.');
+      });
   }
 
-  calcular(juego: any): number {
-    if (juego.tipo === 'nacional') {
-      return Math.round(juego.valor * 0.83);
-    } else if (juego.tipo === 'mega') {
-      return Math.round(juego.valor * 0.32 * 0.72 * this.dolar);
-    }
-    return 0;
+  calcularLotoKino(valor: number): number {
+    return Math.round(valor * 0.83); // 17% de descuento
+  }
+
+  calcularMega(valor: number): number {
+    return Math.round(valor * 0.32 * 0.72 * this.dolar());
   }
 }
 
