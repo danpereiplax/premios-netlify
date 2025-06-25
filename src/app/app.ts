@@ -1,13 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   styles: [`
     .container {
       max-width: 400px;
@@ -59,7 +58,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
     </div>
   `
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   loto = 0;
   kino = 0;
   mega = 0;
@@ -67,18 +66,15 @@ export class AppComponent {
 
   private http = inject(HttpClient);
 
-  constructor() {
-    this.obtenerDolar();
-  }
-
-  obtenerDolar(): void {
-    this.http.get<any>('https://findic.cl/api/').subscribe({
-      next: (data) => {
-        const valor = parseInt(data.dolar?.valor ?? '950', 10);
-        if (!isNaN(valor)) this.dolar = valor;
+  ngOnInit() {
+    this.http.get<any>('https://mindicador.cl/api/dolar').subscribe({
+      next: data => {
+        if (data?.serie?.[0]?.valor) {
+          this.dolar = Math.round(data.serie[0].valor);
+        }
       },
       error: () => {
-        this.dolar = 950;
+        console.warn('No se pudo obtener el valor del dólar, se usa valor por defecto.');
       }
     });
   }
@@ -92,11 +88,8 @@ export class AppComponent {
   }
 
   soloNumeros(event: KeyboardEvent): void {
-    const char = event.key;
-    if (!/^[0-9]$/.test(char)) {
+    if (!/^[0-9]$/.test(event.key)) {
       event.preventDefault();
     }
   }
 }
-
-bootstrapApplication(AppComponent);
