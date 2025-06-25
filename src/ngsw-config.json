@@ -8,9 +8,7 @@
       "resources": {
         "files": [
           "/favicon.ico",
-          "/index.csr.html",
           "/index.html",
-          "/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]
@@ -22,8 +20,22 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+          "/assets/**",
+          "/*.(png|jpg|jpeg|svg|webp)",
+          "/manifest.webmanifest"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-data",
+      "urls": ["https://findic.cl/api/**"],
+      "cacheConfig": {
+        "maxSize": 5,
+        "maxAge": "6h",
+        "strategy": "freshness",
+        "timeout": "10s"
       }
     }
   ]
