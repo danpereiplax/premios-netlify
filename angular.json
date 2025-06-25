@@ -21,7 +21,8 @@
             "assets": [
               "src/assets",
               "src/manifest.webmanifest",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/_redirects"
             ],
             "styles": ["src/styles.css"],
             "serviceWorker": "src/ngsw-config.json"
